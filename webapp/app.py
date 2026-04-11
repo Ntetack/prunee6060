@@ -11,24 +11,23 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# classes Intel dataset
-CLASSES = ['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']
+# MNIST classes
+CLASSES = [str(i) for i in range(10)]
 
-# DEVICE = CPU ONLY (PythonAnywhere limitation)
 device = torch.device("cpu")
 
-# charger modèle
+# load model ONCE
 model = CNN1()
 model.load_state_dict(torch.load("model.pth", map_location=device))
 model.to(device)
 model.eval()
 
-# transformation (SANS augmentation)
+# MNIST preprocessing
 transform = transforms.Compose([
-    transforms.Resize((150, 150)),
+    transforms.Grayscale(),   # important
+    transforms.Resize((28, 28)),
     transforms.ToTensor(),
-    transforms.Normalize((0.5, 0.5, 0.5),
-                         (0.5, 0.5, 0.5))
+    transforms.Normalize((0.5,), (0.5,))
 ])
 
 @app.route('/', methods=['GET', 'POST'])
@@ -43,7 +42,7 @@ def index():
             filepath = os.path.join(UPLOAD_FOLDER, file.filename)
             file.save(filepath)
 
-            image = Image.open(filepath).convert('RGB')
+            image = Image.open(filepath).convert("RGB")
             image = transform(image).unsqueeze(0)
 
             with torch.no_grad():
