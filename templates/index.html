@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MNIST Classifier</title>
+    <title>Intel Image Classifier</title>
 </head>
 <body>
 
-<h1>MNIST Digit Recognition</h1>
+<h1>Image Classification</h1>
 
 <form method="POST" enctype="multipart/form-data">
+
+    <label>Choisir le modèle :</label>
+    <select name="model">
+        <option value="torch">PyTorch</option>
+        <option value="tf">TensorFlow</option>
+    </select>
+
+    <br><br>
+
     <input type="file" name="image" required>
     <button type="submit">Predict</button>
+
 </form>
 
 {% if image_url %}
     <h3>Image:</h3>
-    <img src="{{ image_url }}" width="200">
+    <img src="{{ image_url }}" width="300">
 {% endif %}
 
 {% if prediction %}
